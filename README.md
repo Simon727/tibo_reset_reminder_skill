@@ -9,7 +9,7 @@
 把下面这句话直接发给支持安装 Skills 和定时任务的 Agent：
 
 ```text
-请从 https://github.com/orange90/tibo_reset_reminder_skill 安装 tibo_reset_reminder_skill；使用项目提供的免 Token 公共 Feed，不要使用 Google Cache，也不要向我索要 X API Token；安装后先运行一次，读取 Tibo（@thsottiaux）最近 7 天的动态并总结 Codex 额度实际重置了几次，然后配置为每 15 分钟检查一次；以后只有发现新的明确重置时间时才提醒我，附上内容摘要和原帖链接，否则保持静默。
+请从 https://github.com/orange90/tibo_reset_reminder_skill 安装 tibo_reset_reminder_skill；使用项目提供的免 Token 公共 Feed，不要使用 Google Cache，也不要向我索要 X API Token；安装后先运行一次，读取 Tibo（@thsottiaux）最近 7 天的动态并总结 Codex 额度实际重置了几次，然后配置为每 5 分钟检查一次；以后只有发现新的明确重置时间时才提醒我，附上内容摘要和原帖链接，否则保持静默。
 ```
 
 仓库使用你容易识别的名称 `tibo_reset_reminder_skill`；安装时，Agent 会按照 Agent Skills 规范将技能注册为 `tibo-reset-reminder-skill`。
@@ -52,7 +52,7 @@ Skill 安装后第一次运行，会发送一条一次性历史摘要：
 首次扫描完成：过去 7 天，Tibo 明确提到 Codex 额度重置共 2 次。
 7 月 25 日 — 每周额度完成重置 — 原帖链接
 7 月 28 日 — 滚动额度完成重置 — 原帖链接
-接下来我会每 15 分钟检查一次；没有新的重置信息时不会打扰你。
+接下来我会每 5 分钟检查一次；没有新的重置信息时不会打扰你。
 ```
 
 计数以“实际重置事件”为单位，而不是以推文数量为单位。同一次重置的预告、补充和确认不会被算成三次；证据不明确的内容也不会被强行计入。
@@ -73,7 +73,7 @@ Skill 安装后第一次运行，会发送一条一次性历史摘要：
 
 1. 将本仓库克隆或复制到宿主支持的 Skills 目录，并将技能目录注册为 `tibo-reset-reminder-skill`。
 2. 立即运行一次首次扫描，发送最近 7 天的重置次数摘要并完成初始化。
-3. 创建每 15 分钟运行一次的 automation、scheduled task 或 cron job。
+3. 创建每 5 分钟运行一次的 automation、scheduled task 或 cron job。
 4. 为不同轮询任务提供持久化状态文件，例如通过 `TIBO_RESET_REMINDER_STATE` 指定路径。
 5. 配置通知渠道，并抑制精确输出 `NO_REPLY`。
 
@@ -87,7 +87,7 @@ git clone https://github.com/orange90/tibo_reset_reminder_skill.git tibo-reset-r
 
 然后让宿主 Agent 读取 `SKILL.md`，先执行一次首次扫描，再参考 [`references/scheduling.md`](references/scheduling.md) 创建定时任务。
 
-> Skill 每次只执行一次检查，它本身不是常驻进程。15 分钟轮询必须由宿主的定时任务能力负责。
+> Skill 每次只执行一次检查，它本身不是常驻进程。5 分钟轮询必须由宿主的定时任务能力负责。
 
 ## 为什么 Hermes 会请求 cronjob 权限
 
@@ -109,7 +109,7 @@ Skill 本身不能创建 cronjob。上面的“一句话安装”同时要求了
 ## 公共 Feed 如何工作
 
 ```text
-Upstash QStash（每 15 分钟）
+Upstash QStash（每 5 分钟）
         ↓ POST /api/refresh
 Vercel Function → X 公开网页（Embed 作为补充）
         ↓
@@ -135,13 +135,13 @@ Upstash Redis（保存 30 天）
 3. 生成一个至少 32 字节的随机值，在 Vercel 的 Production、Preview 和 Development 环境中保存为 `REFRESH_SECRET`。
 4. 重新部署后，向 `POST https://你的域名/api/refresh` 发送 `Authorization: Bearer <REFRESH_SECRET>`，完成第一次缓存初始化。
 5. 添加 [Upstash QStash](https://vercel.com/marketplace/upstash) 免费资源，创建计划：
-   - Cron：`*/15 * * * *`
+   - Cron：`*/5 * * * *`
    - Method：`POST`
    - Destination：`https://你的域名/api/refresh`
    - Forwarded header：`Authorization: Bearer <REFRESH_SECRET>`
 6. 打开 `/api/health`，确认 `ok: true`；再打开 `/api/feed` 检查标准化数据。
 
-Vercel Hobby 自带 Cron 目前只能每天运行一次，因此 15 分钟刷新由 QStash 负责。每 15 分钟一次是每天 96 条消息，低于 QStash 免费版每天 1,000 条的额度。Feed 只保存一个最多 200 条帖子的 JSON，远低于 Upstash Redis 免费额度。最新限制请以 [Vercel Cron 文档](https://vercel.com/docs/cron-jobs/usage-and-pricing)、[QStash 价格页](https://upstash.com/pricing/qstash)和 [Redis 价格页](https://upstash.com/pricing/redis)为准。
+Vercel Hobby 自带 Cron 目前只能每天运行一次，因此 5 分钟刷新由 QStash 负责。每 5 分钟一次是每天 288 条消息；本项目只重试 1 次，即使全天每次都失败并重试也只有 576 条，低于 QStash 免费版每天 1,000 条的额度。Feed 只保存一个最多 200 条帖子的 JSON，远低于 Upstash Redis 免费额度。最新限制请以 [Vercel Cron 文档](https://vercel.com/docs/cron-jobs/usage-and-pricing)、[QStash 价格页](https://upstash.com/pricing/qstash)和 [Redis 价格页](https://upstash.com/pricing/redis)为准。
 
 ## 目录结构
 
@@ -179,7 +179,7 @@ An intentionally quiet Agent Skill that checks Tibo's ([@thsottiaux](https://x.c
 Send this sentence to an Agent that supports Skills and scheduled tasks:
 
 ```text
-Install tibo_reset_reminder_skill from https://github.com/orange90/tibo_reset_reminder_skill; use its token-free public Feed, never Google Cache, and do not ask me for an X API token; immediately run it once to read Tibo's (@thsottiaux) activity from the past 7 days and summarize how many distinct Codex quota resets occurred, then schedule checks every 15 minutes; afterward, notify me only when he gives new concrete reset timing, including a brief summary and source permalink, otherwise stay silent.
+Install tibo_reset_reminder_skill from https://github.com/orange90/tibo_reset_reminder_skill; use its token-free public Feed, never Google Cache, and do not ask me for an X API token; immediately run it once to read Tibo's (@thsottiaux) activity from the past 7 days and summarize how many distinct Codex quota resets occurred, then schedule checks every 5 minutes; afterward, notify me only when he gives new concrete reset timing, including a brief summary and source permalink, otherwise stay silent.
 ```
 
 The repository uses the requested name `tibo_reset_reminder_skill`. For Agent Skills compatibility, install or register it as `tibo-reset-reminder-skill`.
@@ -231,7 +231,7 @@ git clone https://github.com/orange90/tibo_reset_reminder_skill.git tibo-reset-r
 
 Ask the host Agent to load `SKILL.md`, perform the first-run scan once, then follow [`references/scheduling.md`](references/scheduling.md) to create the recurring task.
 
-The Skill performs one check per invocation; it cannot keep its own timer alive. A host automation, scheduled task, or cron job must invoke it every 15 minutes.
+The Skill performs one check per invocation; it cannot keep its own timer alive. A host automation, scheduled task, or cron job must invoke it every 5 minutes.
 
 ### Why Hermes asks for cronjob approval
 
@@ -246,7 +246,7 @@ An operator may preconfigure `X_BEARER_TOKEN` as an optional official-API recove
 ### Public Feed architecture
 
 ```text
-Upstash QStash (every 15 minutes)
+Upstash QStash (every 5 minutes)
         -> POST /api/refresh
 Vercel Function -> public X web rendering (Embed supplement) -> Upstash Redis
         -> GET /api/feed
@@ -265,7 +265,7 @@ End users can skip this section. The project maintainer configures it once:
 2. Connect a free [Upstash for Redis](https://vercel.com/marketplace/upstash) resource. The code accepts either `UPSTASH_REDIS_REST_URL/TOKEN` or `KV_REST_API_URL/TOKEN`.
 3. Store a random value of at least 32 bytes as `REFRESH_SECRET` for all Vercel environments and redeploy.
 4. Initialize the cache with an authorized `POST /api/refresh`.
-5. Create a free QStash schedule with cron `*/15 * * * *`, method `POST`, destination `https://your-domain/api/refresh`, and forwarded header `Authorization: Bearer <REFRESH_SECRET>`.
+5. Create a free QStash schedule with cron `*/5 * * * *`, method `POST`, destination `https://your-domain/api/refresh`, and forwarded header `Authorization: Bearer <REFRESH_SECRET>`.
 6. Verify `/api/health`, then inspect `/api/feed`.
 
-Vercel Hobby cron currently runs at most daily, so QStash supplies the 15-minute trigger. This schedule uses 96 messages/day versus QStash Free's 1,000/day allowance. See the current [Vercel Cron limits](https://vercel.com/docs/cron-jobs/usage-and-pricing), [QStash pricing](https://upstash.com/pricing/qstash), and [Redis pricing](https://upstash.com/pricing/redis).
+Vercel Hobby cron currently runs at most daily, so QStash supplies the 5-minute trigger. This schedule uses 288 messages/day; with the configured single retry, even an all-day failure scenario uses 576 versus QStash Free's 1,000/day allowance. See the current [Vercel Cron limits](https://vercel.com/docs/cron-jobs/usage-and-pricing), [QStash pricing](https://upstash.com/pricing/qstash), and [Redis pricing](https://upstash.com/pricing/redis).

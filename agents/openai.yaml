@@ -1,4 +1,4 @@
 interface:
   display_name: "Tibo Reset Reminder Skill"
   short_description: "Token-free Tibo reset monitoring and recap"
-  default_prompt: "Use $tibo-reset-reminder-skill to summarize Tibo’s Codex quota resets from the past seven days through its public Feed, then monitor new reset timing every 15 minutes."
+  default_prompt: "Use $tibo-reset-reminder-skill to summarize Tibo’s Codex quota resets from the past seven days through its public Feed, then monitor new reset timing every 5 minutes."

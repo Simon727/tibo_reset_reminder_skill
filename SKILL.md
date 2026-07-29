@@ -1,6 +1,6 @@
 ---
 name: tibo-reset-reminder-skill
-description: Monitor Tibo Louis-Charles (@thsottiaux) on X through the project's token-free public Feed for Codex quota-reset information, produce a one-time seven-day reset-count summary on the first run, then deduplicate checks and notify the user only when a new concrete reset time or actionable reset schedule appears. Use for installing or onboarding this monitor, recurring scheduled checks such as every 15 minutes, ad hoc Codex quota-reset checks, or configuring a silent-unless-matched monitoring task without asking the user for an X API token.
+description: Monitor Tibo Louis-Charles (@thsottiaux) on X through the project's token-free public Feed for Codex quota-reset information, produce a one-time seven-day reset-count summary on the first run, then deduplicate checks and notify the user only when a new concrete reset time or actionable reset schedule appears. Use for installing or onboarding this monitor, recurring scheduled checks such as every 5 minutes, ad hoc Codex quota-reset checks, or configuring a silent-unless-matched monitoring task without asking the user for an X API token.
 ---
 
 # Tibo Reset Reminder Skill
@@ -59,7 +59,7 @@ The Skill cannot execute merely because its files were copied. Run this flow on 
    ```text
    首次扫描完成：过去 7 天，Tibo 明确提到 Codex 额度重置共【N】次。
    【日期/时间】—【事件摘要】—【来源链接】
-   接下来我会每 15 分钟检查一次；没有新的重置信息时不会打扰你。
+   接下来我会每 5 分钟检查一次；没有新的重置信息时不会打扰你。
    ```
 
    English pattern:
@@ -67,7 +67,7 @@ The Skill cannot execute merely because its files were copied. Run this flow on 
    ```text
    Initial scan complete: in the past 7 days, Tibo clearly reported [N] distinct Codex quota resets.
    [Date/time] — [event summary] — [source permalink]
-   I will now check every 15 minutes and stay silent unless new reset information appears.
+   I will now check every 5 minutes and stay silent unless new reset information appears.
    ```
 
 4. After the summary has been delivered successfully, mark every fetched post seen and complete onboarding atomically:
@@ -148,6 +148,6 @@ The Skill cannot execute merely because its files were copied. Run this flow on 
 
 ## Scheduling
 
-This skill performs one check; it cannot create or keep a background timer by itself. The host owns scheduler creation and may require the user's approval before creating a cronjob. Run onboarding once, then configure the host to invoke the recurring flow every 15 minutes with a persistent state path and a notification destination. Read [references/scheduling.md](references/scheduling.md) when installing or scheduling the monitor.
+This skill performs one check; it cannot create or keep a background timer by itself. The host owns scheduler creation and may require the user's approval before creating a cronjob. Run onboarding once, then configure the host to invoke the recurring flow every 5 minutes with a persistent state path and a notification destination. Read [references/scheduling.md](references/scheduling.md) when installing or scheduling the monitor.
 
 The bundled fetcher requires no credential for its default public-Feed path. X API v2 remains an optional operator fallback only. Do not ask end users for an X token and do not substitute search caches when the Feed reports an error.

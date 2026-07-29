@@ -4,7 +4,7 @@
 
 Configure any scheduler or automation-capable Agent with these values:
 
-- Interval: every 15 minutes, with no overlapping runs.
+- Interval: every 5 minutes, with no overlapping runs.
 - Onboarding: invoke `$tibo-reset-reminder-skill` once immediately after installation so it can summarize distinct resets from the previous seven days and initialize state.
 - Recurring action: invoke `$tibo-reset-reminder-skill` for exactly one monitoring run.
 - Persistent state: set `TIBO_RESET_REMINDER_STATE` to a writable JSON path that survives isolated runs.
