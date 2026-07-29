@@ -56,6 +56,12 @@ Skill 安装后第一次运行，会发送一条一次性历史摘要：
 
 计数以“实际重置事件”为单位，而不是以推文数量为单位。同一次重置的预告、补充和确认不会被算成三次；证据不明确的内容也不会被强行计入。
 
+已经安装过旧版本，想立刻体验这个功能，可以直接对 Agent 说：
+
+```text
+请用 $tibo-reset-reminder-skill 总结 Tibo 最近 7 天提到的 Codex 额度重置，按实际重置事件去重计数，并附上摘要和原帖链接；不要修改现有定时任务。
+```
+
 ## 安装与配置
 
 ### 让 Agent 自动安装
@@ -151,6 +157,12 @@ If the reset is not imminent, the Agent uses accurate wording such as “will re
 ### First run: seven-day summary
 
 After installation, the first invocation sends a one-time summary of how many distinct Codex quota resets Tibo clearly reported during the previous seven days. Announcements, follow-ups, and confirmations for the same underlying reset are grouped as one event. Ambiguous evidence is excluded rather than inflating the count.
+
+Existing users can request the same recap without changing current scheduler or deduplication state:
+
+```text
+Use $tibo-reset-reminder-skill to summarize the distinct Codex quota resets Tibo reported in the past 7 days, including brief summaries and source permalinks; do not change my existing scheduled task.
+```
 
 ### Manual installation
 

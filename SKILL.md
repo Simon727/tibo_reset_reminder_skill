@@ -26,6 +26,7 @@ python3 scripts/state_store.py status --state "$TIBO_RESET_REMINDER_STATE"
 
 - If `initialized` is `false`, perform the first-run onboarding flow.
 - If `initialized` is `true`, perform the recurring monitoring flow.
+- If the user explicitly requests a seven-day recap, perform the same historical fetch, grouping, and summary even when state is already initialized. In that manual mode, leave existing initialization and deduplication state unchanged.
 - Treat an older state file that already contains seen or notified posts as initialized. Do not surprise an existing installation with a retroactive onboarding summary after an upgrade.
 
 ## First-run onboarding
