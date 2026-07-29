@@ -1,4 +1,4 @@
 interface:
   display_name: "Tibo Reset Reminder Skill"
-  short_description: "Watch Tibo for Codex quota reset timing"
-  default_prompt: "Use $tibo-reset-reminder-skill to watch Tibo’s latest X posts and notify me in my language only when he gives a concrete Codex quota reset time."
+  short_description: "Summarize recent resets, then watch Tibo"
+  default_prompt: "Use $tibo-reset-reminder-skill to summarize Tibo’s Codex quota resets from the past seven days on first run, then monitor new reset timing every 15 minutes."

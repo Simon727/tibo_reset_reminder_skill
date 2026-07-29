@@ -10,6 +10,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 
 
 API_BASE = "https://api.x.com/2"
@@ -67,10 +68,17 @@ def main() -> int:
     parser.add_argument("--username", default="thsottiaux")
     parser.add_argument("--max-results", type=int, default=20)
     parser.add_argument("--since-id")
+    parser.add_argument(
+        "--lookback-days",
+        type=float,
+        help="Only request posts created within this many days of the current UTC time",
+    )
     args = parser.parse_args()
 
     if not 5 <= args.max_results <= 100:
         parser.error("--max-results must be between 5 and 100")
+    if args.lookback_days is not None and args.lookback_days <= 0:
+        parser.error("--lookback-days must be greater than zero")
 
     token = os.environ.get("X_BEARER_TOKEN")
     if not token:
@@ -94,6 +102,11 @@ def main() -> int:
         }
         if args.since_id:
             params["since_id"] = args.since_id
+        if args.lookback_days is not None:
+            start_time = datetime.now(timezone.utc) - timedelta(days=args.lookback_days)
+            params["start_time"] = start_time.replace(microsecond=0).isoformat().replace(
+                "+00:00", "Z"
+            )
         payload = api_get(f"/users/{user_id}/tweets", token, params)
         posts = [normalize(post, username) for post in payload.get("data", [])]
         json.dump(posts, sys.stdout, ensure_ascii=False, indent=2)
