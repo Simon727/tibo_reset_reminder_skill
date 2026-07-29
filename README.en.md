@@ -2,7 +2,7 @@
 
 > Stop refreshing X. When Tibo announces when Codex quota will reset, your Agent tells you.
 
-✅ Agent Skill · 🔑 No X API token · 🆓 Free public Feed · ⏱️ Checks every 5 minutes · 🔕 Silent by default
+✅ Agent Skill · 🔑 No X API token · 🆓 Free public Feed · ⏱️ Checks every 15 minutes · 🔕 Silent by default
 
 [中文](README.md) · [Live Feed](https://tibo-reset-reminder-skill.vercel.app/api/feed) · [Service health](https://tibo-reset-reminder-skill.vercel.app/api/health)
 
@@ -11,7 +11,7 @@
 Send this complete prompt to an Agent that supports Agent Skills and scheduled tasks:
 
 ```text
-Install tibo-reset-reminder-skill from https://github.com/orange90/tibo_reset_reminder_skill. First summarize how many distinct Codex quota resets Tibo (@thsottiaux) mentioned during the past 7 days, then check every 5 minutes. Notify me only when a new post gives concrete reset timing, with a short summary and source permalink. Use the project's public Feed and do not ask me for an X API token.
+Install tibo-reset-reminder-skill from https://github.com/orange90/tibo_reset_reminder_skill. First summarize how many distinct Codex quota resets Tibo (@thsottiaux) mentioned during the past 7 days, then check every 15 minutes. Notify me only when a new post gives concrete reset timing, with a short summary and source permalink. Use the project's public Feed and do not ask me for an X API token.
 ```
 
 The host may request permission to create a scheduled task. That is expected. You can grant one-time approval first and verify the interval and notification target before allowing it permanently.
@@ -68,7 +68,7 @@ The Skill performs one check per invocation. It cannot keep its own background p
 
 ```mermaid
 flowchart LR
-    A["QStash refreshes every 5 minutes"] --> B["Vercel public Feed"]
+    A["QStash refreshes every 15 minutes"] --> B["Vercel public Feed"]
     B --> C["Agent with the Skill installed"]
     C -->|new concrete reset time| D["Notify the user"]
     C -->|no match| E["Stay silent"]
