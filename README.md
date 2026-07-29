@@ -1,10 +1,12 @@
 # ⏰ Tibo Reset Reminder
 
+[English](README.en.md) 
+
 > 不用再反复刷新 X。Tibo 一公布 Codex 额度重置时间，你的 Agent 就会提醒你。
 
 ✅ Agent Skill · 🔑 无需 X API Token · 🆓 免费公共 Feed · ⏱️ 每 15 分钟检查 · 🔕 未命中就静默
 
-[English](README.en.md) · [查看实时 Feed](https://tibo-reset-reminder-skill.vercel.app/api/feed) · [查看服务状态](https://tibo-reset-reminder-skill.vercel.app/api/health)
+· [查看实时 Feed](https://tibo-reset-reminder-skill.vercel.app/api/feed) · [查看服务状态](https://tibo-reset-reminder-skill.vercel.app/api/health)
 
 ## 30 秒安装
 
