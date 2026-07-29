@@ -2,7 +2,7 @@
 
 > 不用再反复刷新 X。Tibo 一公布 Codex 额度重置时间，你的 Agent 就会提醒你。
 
-✅ Agent Skill · 🔑 无需 X API Token · 🆓 免费公共 Feed · ⏱️ 每 5 分钟检查 · 🔕 未命中就静默
+✅ Agent Skill · 🔑 无需 X API Token · 🆓 免费公共 Feed · ⏱️ 每 15 分钟检查 · 🔕 未命中就静默
 
 [English](README.en.md) · [查看实时 Feed](https://tibo-reset-reminder-skill.vercel.app/api/feed) · [查看服务状态](https://tibo-reset-reminder-skill.vercel.app/api/health)
 
@@ -11,7 +11,7 @@
 把下面这句话完整发送给支持 Agent Skills 和定时任务的 Agent：
 
 ```text
-请从 https://github.com/orange90/tibo_reset_reminder_skill 安装 tibo-reset-reminder-skill。安装后先总结 Tibo（@thsottiaux）最近 7 天提到的 Codex 额度重置次数，然后每 5 分钟检查一次；只有发现新的、明确的重置时间时才提醒我，并附上内容摘要和原帖链接。使用项目提供的公共 Feed，不要向我索要 X API Token。
+请从 https://github.com/orange90/tibo_reset_reminder_skill 安装 tibo-reset-reminder-skill。安装后先总结 Tibo（@thsottiaux）最近 7 天提到的 Codex 额度重置次数，然后每 15 分钟检查一次；只有发现新的、明确的重置时间时才提醒我，并附上内容摘要和原帖链接。使用项目提供的公共 Feed，不要向我索要 X API Token。
 ```
 
 安装时，宿主可能会请求创建定时任务的权限。这是正常行为；你可以先选择单次授权，核对频率和通知对象后再决定是否永久授权。
