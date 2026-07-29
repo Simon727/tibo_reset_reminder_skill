@@ -4,3 +4,6 @@ __pycache__/
 *.state.json
 posts.json
 new-posts.json
+.vercel
+.env*
+!.env.example
