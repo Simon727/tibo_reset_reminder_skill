@@ -27,7 +27,7 @@ def version_key(post_id: str, text: str) -> str:
 
 def load_state(path: Path) -> dict:
     if not path.exists():
-        return {"version": 1, "seen": {}, "notified": {}}
+        return {"version": 2, "seen": {}, "notified": {}}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -38,6 +38,13 @@ def load_state(path: Path) -> dict:
     data.setdefault("seen", {})
     data.setdefault("notified", {})
     return data
+
+
+def is_initialized(state: dict) -> bool:
+    """Treat pre-v2 state with activity as initialized for upgrade compatibility."""
+    return bool(
+        state.get("initialized_at") or state.get("seen") or state.get("notified")
+    )
 
 
 def trim(entries: dict) -> dict:
@@ -98,6 +105,13 @@ def main() -> int:
     seen_parser.add_argument("--state", required=True)
     seen_parser.add_argument("--input", default="-")
 
+    status_parser = subparsers.add_parser("status")
+    status_parser.add_argument("--state", required=True)
+
+    initialized_parser = subparsers.add_parser("mark-initialized")
+    initialized_parser.add_argument("--state", required=True)
+    initialized_parser.add_argument("--input", required=True)
+
     notified_parser = subparsers.add_parser("mark-notified")
     notified_parser.add_argument("--state", required=True)
     notified_parser.add_argument("--post-id", required=True)
@@ -111,6 +125,19 @@ def main() -> int:
 
     try:
         state = load_state(path)
+        if args.command == "status":
+            json.dump(
+                {
+                    "initialized": is_initialized(state),
+                    "initialized_at": state.get("initialized_at"),
+                },
+                sys.stdout,
+                ensure_ascii=False,
+                indent=2,
+            )
+            sys.stdout.write("\n")
+            return 0
+
         if args.command == "filter-new":
             posts = read_posts(args.input)
             unseen = [
@@ -129,6 +156,19 @@ def main() -> int:
                 state["seen"][version_key(post_id, text)] = entry(post_id, text)
             save_state(path, state)
             print(f"marked-seen:{len(posts)}")
+            return 0
+
+        if args.command == "mark-initialized":
+            posts = read_posts(args.input)
+            timestamp = now()
+            for post in posts:
+                post_id, text = str(post["id"]), str(post["text"])
+                state["seen"][version_key(post_id, text)] = entry(post_id, text)
+            state["version"] = 2
+            state["initialized_at"] = state.get("initialized_at") or timestamp
+            state["onboarding_lookback_days"] = 7
+            save_state(path, state)
+            print(f"initialized:{len(posts)}")
             return 0
 
         if args.input:
